@@ -8,8 +8,7 @@ spec:
   source:
     repoURL: "file:///mnt/local-argo/.git"
     targetRevision: main
-    path: charts
-    chart: local-stack
+    path: charts/local-stack
     helm: {}
   destination:
     server: "https://kubernetes.default.svc"

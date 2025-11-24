@@ -1,14 +1,17 @@
 package argocd
 
 import (
+	"errors"
 	"fmt"
 	stdlog "log"
 	"os"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/cli"
+	"helm.sh/helm/v3/pkg/storage/driver"
 )
 
 // RepoMount defines a name/hostPath/mountPath triple for mounting a repository
@@ -93,15 +96,43 @@ func InstallOrUpgradeArgoCD(mounts []RepoMount, kubeconfig string) (string, erro
 		return "", fmt.Errorf("load chart: %w", err)
 	}
 
-	u := action.NewUpgrade(&cfg)
-	u.Install = true
-	u.Namespace = namespace
-	u.Wait = true
-	rel, err := u.Run(release, ch, values)
+	// Prepare variables to capture release name and version after install/upgrade.
+	var relName string
+	var relVersion int
+	// If not found -> install, else upgrade.
+	g := action.NewGet(&cfg)
+	_, err = g.Run(release)
 	if err != nil {
-		return "", fmt.Errorf("upgrade/install failed: %w", err)
+		// If the release is not found, perform an install.
+		if errors.Is(err, driver.ErrReleaseNotFound) {
+			i := action.NewInstall(&cfg)
+			i.ReleaseName = release
+			i.Namespace = namespace
+			i.CreateNamespace = true
+			i.Timeout = time.Duration(5) * time.Minute
+			i.Wait = true
+			rel, err := i.Run(ch, values)
+			if err != nil {
+				return "", fmt.Errorf("install failed: %w", err)
+			}
+			relName = rel.Name
+			relVersion = rel.Version
+		} else {
+			return "", fmt.Errorf("failed checking release: %w", err)
+		}
+	} else {
+		// Release exists -> perform upgrade.
+		u := action.NewUpgrade(&cfg)
+		u.Namespace = namespace
+		u.Wait = true
+		rel, err := u.Run(release, ch, values)
+		if err != nil {
+			return "", fmt.Errorf("upgrade failed: %w", err)
+		}
+		relName = rel.Name
+		relVersion = rel.Version
 	}
 
-	log.Info().Str("release", rel.Name).Int("version", rel.Version).Str("namespace", namespace).Msg("argocd installed/updated via helm sdk")
-	return fmt.Sprintf("release %s (version %d)", rel.Name, rel.Version), nil
+	log.Info().Str("release", relName).Int("version", relVersion).Str("namespace", namespace).Msg("argocd installed/updated via helm sdk")
+	return fmt.Sprintf("release %s (version %d)", relName, relVersion), nil
 }
