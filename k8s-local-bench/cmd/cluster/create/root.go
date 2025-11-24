@@ -36,8 +36,10 @@ func createCluster(cmd *cobra.Command, args []string) {
 		log.Debug().Bool("debug", true).Msg("debug enabled")
 	}
 
-	// check for kind config file (always look in working directory)
-	kindCfg := findKindConfig()
+	// get cluster name and locate kind config inside CLI config clusters/<name>
+	clusterName, _ := cmd.Flags().GetString("cluster-name")
+	// check for kind config file (looks inside CLI config directory clusters/<cluster-name>)
+	kindCfg := findKindConfig(clusterName)
 	if kindCfg == "" {
 		log.Info().Msg("no kind config file found in current directory; proceeding without one")
 	} else {
@@ -57,8 +59,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	// create a kind cluster (name is currently fixed)
-	clusterName := "local-bench"
+	// create a kind cluster using provided cluster name
 	if err := kindsvc.Create(clusterName, kindCfg); err != nil {
 		log.Error().Err(err).Msg("failed creating kind cluster")
 		return
@@ -90,7 +91,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 
 // findKindConfig searches the current working directory for common kind config filenames.
 // Returns the first match (absolute path) or empty string if none found.
-func findKindConfig() string {
+func findKindConfig(clusterName string) string {
 	base := config.CliConfig.Directory
 	var err error
 	if base == "" {
@@ -99,6 +100,25 @@ func findKindConfig() string {
 			return ""
 		}
 	}
+
+	// 1) look in CLI config dir under clusters/<clusterName>
+	if clusterName != "" {
+		clusterPath := filepath.Join(base, "clusters", clusterName)
+		candidates := []string{"kind-config.yaml", "kind-config.yml"}
+		for _, name := range candidates {
+			p := filepath.Join(clusterPath, name)
+			if _, err := os.Stat(p); err == nil {
+				return p
+			}
+		}
+		// try broader glob for files starting with "kind"
+		matches, _ := filepath.Glob(filepath.Join(clusterPath, "kind*.y*ml"))
+		if len(matches) > 0 {
+			return matches[0]
+		}
+	}
+
+	// 2) look in CLI config directory root
 	candidates := []string{"kind-config.yaml", "kind-config.yml"}
 	for _, name := range candidates {
 		p := filepath.Join(base, name)
@@ -106,8 +126,23 @@ func findKindConfig() string {
 			return p
 		}
 	}
-	// try broader glob for files starting with "kind"
 	matches, _ := filepath.Glob(filepath.Join(base, "kind*.y*ml"))
+	if len(matches) > 0 {
+		return matches[0]
+	}
+
+	// 3) fallback to current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	for _, name := range candidates {
+		p := filepath.Join(cwd, name)
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	matches, _ = filepath.Glob(filepath.Join(cwd, "kind*.y*ml"))
 	if len(matches) > 0 {
 		return matches[0]
 	}

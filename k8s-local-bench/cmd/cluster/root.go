@@ -16,6 +16,8 @@ func NewCommand() *cobra.Command {
 		Short: "control local k8s clusters",
 	}
 
+	cmd.PersistentFlags().String("cluster-name", "local-bench", "name of the cluster (directory under CLI config clusters/)")
+
 	// add subcommands here
 	cmd.AddCommand(create.NewCommand())
 	return cmd
