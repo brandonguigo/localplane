@@ -21,3 +21,8 @@ helm upgrade --install cnpg \
 ```
 
 # TODO
+- [ ] update the documentation on all the new features / concepts
+- [ ] add mermaid diagrams explaining how it works
+- [ ] test ingress with dnsmasq manually (lookup the cloud-provider-kind logs + update ip in $(brew --prefix)/etc/dnsmasq.conf)
+- [ ] test to deploy a httpbin as a workbench app
+- [ ] add httpbin deployment in the k8s-local-bench chart
