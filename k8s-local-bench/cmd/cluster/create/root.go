@@ -11,6 +11,7 @@ import (
 
 	"k8s-local-bench/config"
 	kindsvc "k8s-local-bench/utils/kind"
+	kindcfg "k8s-local-bench/utils/kind/config"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -52,12 +53,36 @@ func createCluster(cmd *cobra.Command, args []string) {
 		}
 	}
 	// check for kind config file (looks inside CLI config directory clusters/<cluster-name>)
-	kindCfg := findKindConfig(clusterName)
-	if kindCfg == "" {
+	kindCfgPath := findKindConfig(clusterName)
+	var kindCfg kindcfg.KindCluster
+
+	if kindCfgPath == "" {
 		log.Info().Msg("no kind config file found in current directory; proceeding without one")
 	} else {
-		log.Info().Str("path", kindCfg).Msg("found kind config file in current directory")
+		log.Info().Str("path", kindCfgPath).Msg("found kind config file in current directory")
+
+		// load and parse the kind config using the provided kindconfig struct
+		if cfg, err := kindcfg.LoadKindConfig(kindCfgPath); err != nil {
+			log.Error().Err(err).Str("path", kindCfgPath).Msg("failed to load kind config")
+		} else {
+			kindCfg = *cfg
+			log.Info().Str("kind", kindCfg.Kind).Str("apiVersion", kindCfg.APIVersion).Int("nodes", len(kindCfg.Nodes)).Msg("loaded kind config")
+			for i, n := range cfg.Nodes {
+				log.Debug().Int("nodeIndex", i).Str("role", n.Role).Int("extraMounts", len(n.ExtraMounts)).Msg("node details")
+				for j, m := range n.ExtraMounts {
+					log.Debug().Int("nodeIndex", i).Int("mountIndex", j).Str("hostPath", m.HostPath).Str("containerPath", m.ContainerPath).Msg("mount")
+				}
+			}
+		}
 	}
+
+	// TODO: create kindConfig if not found with default settings
+
+	// TODO: update kindConfig to include the mount of the ArgoCD local repo
+
+	// TODO: create the argocd directory that will contain the local-stack chart
+
+	// TODO: download local-stack template from GitHub if not present into ArgoCD directory
 
 	// ask for confirmation unless user passed --yes
 	yes, _ := cmd.Flags().GetBool("yes")
@@ -75,7 +100,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 	// create a kind cluster using provided cluster name
 	// kubeconfig path will be in CLI config directory under clusters/<name>/kubeconfig
 	kubeconfigPath := filepath.Join(config.CliConfig.Directory, "clusters", clusterName, "kubeconfig")
-	if err := kindsvc.Create(clusterName, kindCfg, kubeconfigPath); err != nil {
+	if err := kindsvc.Create(clusterName, kindCfgPath, kubeconfigPath); err != nil {
 		log.Error().Err(err).Msg("failed creating kind cluster")
 		return
 	}
@@ -142,6 +167,14 @@ func createCluster(cmd *cobra.Command, args []string) {
 			time.Sleep(5 * time.Second)
 		}
 	}
+
+	// TODO: deploy ArgoCD via Helm chart into the cluster
+
+	// TODO: create local repository for ArgoCD to use
+
+	// TODO: install local-stack ArgoCD app into the cluster
+
+	log.Info().Msg("local k8s cluster creation process completed")
 }
 
 // findKindConfig searches the current working directory for common kind config filenames.

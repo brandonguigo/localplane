@@ -86,8 +86,6 @@ func createCluster(cmd *cobra.Command, args []string) {
 		log.Info().Str("name", clusterName).Msg("kind cluster deletion invoked")
 	}
 
-	// TODO: stop the cloud-provider-kind command
-
 	// attempt to stop any running cloud-provider-kind process (best-effort)
 	if out, err := exec.Command("pkill", "-f", "cloud-provider-kind").CombinedOutput(); err != nil {
 		log.Debug().Err(err).Str("output", string(out)).Msg("pkill for cloud-provider-kind returned error (may be fine if not running)")
