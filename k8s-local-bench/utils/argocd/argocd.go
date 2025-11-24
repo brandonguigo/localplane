@@ -31,9 +31,14 @@ func InstallOrUpgradeArgoCD(mounts []RepoMount, kubeconfig string) (string, erro
 	// prepare values map
 	values := map[string]interface{}{}
 	repoServer := map[string]interface{}{}
+	server := map[string]interface{}{}
 
 	vols := []interface{}{}
 	vms := []interface{}{}
+
+	global := map[string]interface{}{}
+	config := map[string]interface{}{}
+
 	for _, m := range mounts {
 		vols = append(vols, map[string]interface{}{
 			"name": m.Name,
@@ -49,7 +54,23 @@ func InstallOrUpgradeArgoCD(mounts []RepoMount, kubeconfig string) (string, erro
 	}
 	repoServer["volumes"] = vols
 	repoServer["volumeMounts"] = vms
+
+	// add an ingress with the local dnsmasq domain (argocd.k8s-bench.local)
+	host := "argocd.k8s-bench.local"
+	global["domain"] = host
+	config["params"] = map[string]interface{}{
+		"server.insecure": "true",
+	}
+
+	server["ingress"] = map[string]interface{}{
+		"enabled": true,
+		"tls":     false,
+	}
+
+	values["global"] = global
+	values["config"] = config
 	values["repoServer"] = repoServer
+	values["server"] = server
 
 	// helm SDK config
 	settings := cli.New()

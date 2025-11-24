@@ -15,6 +15,9 @@ spec:
         controller:
           kind: Deployment
           ingressClass: haproxy
+          ingressClassResource:
+            enabled: true
+            default: true
           service:
             type: LoadBalancer
   destination:
