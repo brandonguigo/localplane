@@ -117,10 +117,3 @@ func (c *Client) ApplyPaths(ctx context.Context, patterns []string) error {
 	}
 	return nil
 }
-
-// ApplyFiles is a convenience wrapper that creates a default Client and applies
-// the provided patterns. Use kubeconfig as empty string to use default.
-func ApplyFiles(ctx context.Context, patterns []string, kubeconfig string) error {
-	c := NewClient(&kubeconfig, nil)
-	return c.ApplyPaths(ctx, patterns)
-}

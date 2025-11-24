@@ -15,6 +15,7 @@ import (
 	"k8s-local-bench/utils/github"
 	kindsvc "k8s-local-bench/utils/kind"
 	kindcfg "k8s-local-bench/utils/kind/config"
+	"k8s-local-bench/utils/kubectl"
 
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -285,7 +286,17 @@ func createCluster(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	// TODO: install directory/local-argo/bootstrap/argo-bootstrap-*.yaml into the cluster (bootstrap argo repo and apps)
+	// install directory/local-argo/bootstrap/argo-bootstrap-*.yaml into the cluster (bootstrap argo repo and apps)
+	kubectlClient := kubectl.NewClient(&kubeconfigPath, nil)
+	base := config.CliConfig.Directory
+	bootstrapPath := filepath.Join(base, "local-argo", "bootstrap")
+	patterns := []string{filepath.Join(bootstrapPath, "argo-bootstrap-*.yaml")}
+	log.Info().Strs("patterns", patterns).Msg("applying bootstrap manifests into cluster")
+	if err := kubectlClient.ApplyPaths(cmd.Context(), patterns); err != nil {
+		log.Error().Err(err).Msg("failed to apply bootstrap manifests into cluster")
+	} else {
+		log.Info().Msg("applied bootstrap manifests into cluster")
+	}
 
 	log.Info().Msg("local k8s cluster creation process completed")
 }
