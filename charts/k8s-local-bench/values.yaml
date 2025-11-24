@@ -1,0 +1,5 @@
+# Values for k8s-local-bench chart
+
+# ingress defines the ingress controller to use and it's configuration
+ingress:
+  type: haproxy

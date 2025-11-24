@@ -1,0 +1,29 @@
+{{ if eq .Values.ingress.type "haproxy" }}
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: haproxy-ingress
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://haproxytech.github.io/helm-charts
+    chart: kubernetes-ingress
+    targetRevision: "1.46.1"
+    helm:
+      values: |
+        controller:
+          kind: Deployment
+          ingressClass: haproxy
+          service:
+            type: LoadBalancer
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: haproxy
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+{{ end }}

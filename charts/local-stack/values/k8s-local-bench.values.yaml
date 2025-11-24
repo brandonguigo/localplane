@@ -1,0 +1,3 @@
+k8s-local-bench:
+  ingress:
+    type: haproxy

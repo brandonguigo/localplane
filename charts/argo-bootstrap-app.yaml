@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: local-stack-bootstrap
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: "file:///mnt/local-argo.git"
+    targetRevision: main
+    chart: local-stack
+    helm: {}
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: local-stack
+  syncPolicy:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      name: local-stack-bootstrap
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: "file:///mnt/local-argo.git"
+        targetRevision: main
+        chart: local-stack
+        helm: {}
+      destination:
+        server: "https://kubernetes.default.svc"
+        namespace: local-stack
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true
