@@ -126,9 +126,14 @@ func createCluster(cmd *cobra.Command, args []string) {
 			}
 		}
 		if base != "" {
-			repoPath := filepath.Join(base, "local-argo", "local-argo.git")
+			repoPath := filepath.Join(base, "local-argo")
+			//create the repo path direcctory
+			log.Debug().Str("path", repoPath).Msg("initializing local-argo git repo")
+			if err := os.MkdirAll(repoPath, 0o755); err != nil {
+				log.Fatal().Err(err).Str("path", repoPath).Msg("failed to create local-argo git repo directory")
+			}
 			if err := gitutil.InitializeGitRepo(repoPath); err != nil {
-				log.Error().Err(err).Str("path", repoPath).Msg("failed to create local-argo git repo")
+				log.Fatal().Err(err).Str("path", repoPath).Msg("failed to create local-argo git repo")
 			} else {
 				log.Info().Str("path", repoPath).Msg("created local-argo git repo")
 			}

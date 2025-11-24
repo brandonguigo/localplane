@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "file:///mnt/local-argo/local-argo.git"
+    repoURL: "file:///mnt/local-argo/.git"
     targetRevision: main
     path: charts
     chart: local-stack

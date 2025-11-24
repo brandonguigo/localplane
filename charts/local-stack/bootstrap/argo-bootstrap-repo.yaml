@@ -11,4 +11,4 @@ type: Opaque
 stringData:
   type: git
   name: local-argo
-  url: file:///mnt/local-argo/local-argo.git
+  url: file:///mnt/local-argo/.git
