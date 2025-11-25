@@ -22,10 +22,20 @@ type RepoMount struct {
 	MountPath string
 }
 
+// Client is a small helper to configure operations that may need common
+// configuration such as a kubeconfig path.
+type Client struct {
+	Kubeconfig string
+}
+
+// NewClient creates a configured Client. Pass empty string for defaults.
+func NewClient(kubeconfig string) *Client {
+	return &Client{Kubeconfig: kubeconfig}
+}
+
 // InstallOrUpgradeArgoCD installs or upgrades ArgoCD using the Helm SDK (upgrade --install).
 // - mounts: list of RepoMount to add to repoServer.volumes and repoServer.volumeMounts
-// - kubeconfig: optional path to kubeconfig file (when non-empty the helm REST client will use it)
-func InstallOrUpgradeArgoCD(mounts []RepoMount, kubeconfig string) (string, error) {
+func (c *Client) InstallOrUpgradeArgoCD(mounts []RepoMount) (string, error) {
 	// use official argo-cd chart from Argo Helm
 	release := "argocd"
 	namespace := "argocd"
@@ -86,8 +96,8 @@ func InstallOrUpgradeArgoCD(mounts []RepoMount, kubeconfig string) (string, erro
 
 	// helm SDK config
 	settings := cli.New()
-	if kubeconfig != "" {
-		settings.KubeConfig = kubeconfig
+	if c != nil && c.Kubeconfig != "" {
+		settings.KubeConfig = c.Kubeconfig
 	}
 	var cfg action.Configuration
 	if err := cfg.Init(settings.RESTClientGetter(), namespace, os.Getenv("HELM_DRIVER"), stdlog.Printf); err != nil {
