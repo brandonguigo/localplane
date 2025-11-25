@@ -132,7 +132,8 @@ func createCluster(cmd *cobra.Command, args []string) {
 			if err := os.MkdirAll(repoPath, 0o755); err != nil {
 				log.Error().Err(err).Str("path", repoPath).Msg("failed to create local-argo git repo directory")
 			}
-			if err := gitutil.InitializeGitRepo(repoPath); err != nil {
+			gitClient := &gitutil.Client{Path: repoPath}
+			if err := gitClient.InitializeGitRepo(); err != nil {
 				log.Error().Err(err).Str("path", repoPath).Msg("failed to create local-argo git repo")
 			} else {
 				log.Info().Str("path", repoPath).Msg("created local-argo git repo")
@@ -184,7 +185,8 @@ func createCluster(cmd *cobra.Command, args []string) {
 			// commit local-argo repo changes
 			if base != "" {
 				repoPath := filepath.Join(base, "local-argo")
-				if err := gitutil.CommitAll(repoPath, "Update local-argo repo with local-stack helm chart"); err != nil {
+				gitClient := &gitutil.Client{Path: repoPath}
+				if err := gitClient.CommitAll("Update local-argo repo with local-stack helm chart"); err != nil {
 					log.Error().Err(err).Str("path", repoPath).Msg("failed to commit changes to local-argo git repo")
 				} else {
 					log.Info().Str("path", repoPath).Msg("committed changes to local-argo git repo")

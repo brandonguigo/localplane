@@ -7,9 +7,20 @@ import (
 	"os/exec"
 )
 
-// InitializeGitRepo ensures the target path is an empty directory (creates it if missing)
+// Client provides a simple API around common git operations rooted at Path.
+type Client struct {
+	Path string
+}
+
+// NewClient creates a git client that operates on the provided path.
+func NewClient(path string) *Client {
+	return &Client{Path: path}
+}
+
+// InitializeGitRepo ensures the client's Path is an empty directory (creates it if missing)
 // and initializes an empty git repository there. It does not add any remotes/origins.
-func InitializeGitRepo(path string) error {
+func (c *Client) InitializeGitRepo() error {
+	path := c.Path
 	info, err := os.Stat(path)
 	if err == nil {
 		if !info.IsDir() {
@@ -47,9 +58,10 @@ func InitializeGitRepo(path string) error {
 	return nil
 }
 
-// CommitAll stages all changes under the given path and creates a commit with the
+// CommitAll stages all changes under the client's Path and creates a commit with the
 // provided message. The path must be a git repository working tree.
-func CommitAll(path, message string) error {
+func (c *Client) CommitAll(message string) error {
+	path := c.Path
 	// git add --all
 	cmd := exec.Command("git", "add", "--all")
 	cmd.Dir = path
