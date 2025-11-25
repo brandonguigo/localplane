@@ -14,6 +14,8 @@ k8s-local-bench cluster create
 - [ ] automatically get the ingress ip (only load balancer service) + update dnsmasq.conf + restart
 - [ ] add mermaid diagrams explaining how it works
 - [ ] add some spinners and logs to the create command
+- [ ] replace prompts with promptui
+- [ ] use https://github.com/jedib0t/go-pretty for tables, and progress display instead of basic logging
 - [ ] add delete validation to the delete command
 - [ ] display argocd and headlamp (link + token) when the cluster is created
 - [ ] release new version of the k8s-local-bench chart
