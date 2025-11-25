@@ -66,8 +66,9 @@ func InstallOrUpgradeArgoCD(mounts []RepoMount, kubeconfig string) (string, erro
 	}
 
 	server["ingress"] = map[string]interface{}{
-		"enabled": true,
-		"tls":     false,
+		"enabled":          true,
+		"ingressClassName": "haproxy",
+		"tls":              false,
 	}
 
 	values["global"] = global
