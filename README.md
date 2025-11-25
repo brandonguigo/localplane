@@ -16,3 +16,4 @@ k8s-local-bench cluster create
 - [ ] add some spinners and logs to the create command
 - [ ] add delete validation to the delete command
 - [ ] display argocd and headlamp (link + token) when the cluster is created
+- [ ] release new version of the k8s-local-bench chart
