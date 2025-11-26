@@ -1,10 +1,7 @@
 package create
 
 import (
-	"bufio"
 	"context"
-	"fmt"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -17,6 +14,7 @@ import (
 	"k8s-local-bench/utils/kubectl"
 
 	"github.com/briandowns/spinner"
+	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -33,14 +31,20 @@ func createCluster(cmd *cobra.Command, args []string) {
 	// get cluster name and locate kind config inside CLI config clusters/<name>
 	clusterName, _ := cmd.Flags().GetString("cluster-name")
 	if strings.TrimSpace(clusterName) == "" {
-		fmt.Printf("Enter cluster name (default 'local-bench'): ")
-		reader := bufio.NewReader(os.Stdin)
-		input, _ := reader.ReadString('\n')
-		input = strings.TrimSpace(input)
-		if input == "" {
+		prompt := promptui.Prompt{
+			Label:   "Enter cluster name:",
+			Default: "local-bench",
+		}
+
+		input, err := prompt.Run()
+		if err != nil {
+			log.Debug().Err(err).Msg("prompt cancelled or failed; using default cluster name")
 			clusterName = "local-bench"
 		} else {
-			clusterName = input
+			clusterName = strings.TrimSpace(input)
+			if clusterName == "" {
+				clusterName = "local-bench"
+			}
 		}
 	}
 
