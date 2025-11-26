@@ -1,6 +1,7 @@
 package destroy
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -8,6 +9,7 @@ import (
 	"k8s-local-bench/config"
 	kindsvc "k8s-local-bench/utils/kind"
 
+	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -34,6 +36,22 @@ func destroyCluster(cmd *cobra.Command, args []string) {
 		log.Info().Msg("no kind config file found in current directory; proceeding without one")
 	} else {
 		log.Info().Str("path", kindCfg).Msg("found kind config file in current directory")
+	}
+
+	// confirm deletion with the user
+	prompt := promptui.Select{
+		Label: fmt.Sprintf("Are you sure you want to delete kind cluster '%s'?", clusterName),
+		Items: []string{"No", "Yes"},
+		Size:  2,
+	}
+	i, _, err := prompt.Run()
+	if err != nil {
+		log.Error().Err(err).Msg("confirmation prompt failed")
+		return
+	}
+	if i != 1 { // user chose "No"
+		log.Info().Str("name", clusterName).Msg("cluster deletion cancelled by user")
+		return
 	}
 
 	// shutdown cluster

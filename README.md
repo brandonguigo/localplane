@@ -23,8 +23,6 @@ See `docs/CLI.md` and `docs/commands/*` for more details.
 ### TODO
 
 - [ ] rename to project to localplane
-- [ ] automatically get the ingress ip (only load balancer service) + update dnsmasq.conf + restart
-- [ ] add mermaid diagrams explaining how it works
 - [ ] add some spinners and logs to the create command
 - [ ] replace prompts with promptui
 - [ ] use https://github.com/jedib0t/go-pretty for tables, and progress display instead of basic logging

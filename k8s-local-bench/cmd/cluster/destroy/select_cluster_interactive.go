@@ -1,13 +1,11 @@
 package destroy
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 
+	"github.com/manifoldco/promptui"
 	"github.com/rs/zerolog/log"
 )
 
@@ -32,18 +30,26 @@ func selectClusterInteractive() (string, error) {
 		return "", fmt.Errorf("no kind clusters found")
 	}
 
-	fmt.Println("Available kind clusters:")
-	for i, c := range clusters {
-		fmt.Printf("%d) %s\n", i+1, c)
+	// Protect against cases where the command returns a single placeholder
+	// line such as "no kind clusters found" — treat that as no clusters.
+	if len(clusters) == 1 {
+		only := strings.TrimSpace(clusters[0])
+		lower := strings.ToLower(only)
+		if only == "" || strings.Contains(lower, "no kind") || strings.Contains(lower, "no clusters") {
+			return "", fmt.Errorf("no kind clusters found")
+		}
 	}
-	fmt.Printf("Select cluster to destroy [1-%d]: ", len(clusters))
-	reader := bufio.NewReader(os.Stdin)
-	input, _ := reader.ReadString('\n')
-	input = strings.TrimSpace(input)
-	choice, err := strconv.Atoi(input)
-	if err != nil || choice < 1 || choice > len(clusters) {
-		log.Info().Msg("invalid selection; aborting")
-		return "", fmt.Errorf("invalid selection")
+
+	// use promptui to let the user select a cluster
+	prompt := promptui.Select{
+		Label: "Select cluster to destroy",
+		Items: clusters,
+		Size:  len(clusters),
 	}
-	return clusters[choice-1], nil
+	_, result, err := prompt.Run()
+	if err != nil {
+		log.Info().Err(err).Msg("selection aborted or failed")
+		return "", fmt.Errorf("selection aborted: %w", err)
+	}
+	return strings.TrimSpace(result), nil
 }
