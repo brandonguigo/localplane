@@ -23,5 +23,3 @@ See `docs/CLI.md` and `docs/commands/*` for more details.
 ### TODO
 
 - [ ] rename to project to localplane
-- [ ] replace prompts with promptui
-- [ ] configure victoria-metrics ingress

@@ -11,7 +11,25 @@ spec:
     chart: victoria-metrics-k8s-stack
     targetRevision: "0.63.6"
     helm:
-      values: ""
+      values: |
+        vmsingle:
+          ingress:
+            enabled: true
+            ingressClassName: haproxy
+            hosts:
+              - metrics.k8s-bench.local
+            path: /
+            pathType: Prefix
+            tls: []
+        grafana:
+          ingress:
+            enabled: true
+            ingressClassName: haproxy
+            hosts:
+              - grafana.k8s-bench.local
+            path: /
+            pathType: Prefix
+            tls: []
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
