@@ -1,5 +1,5 @@
 apiVersion: v2
-name: local-stack
+name: workspace
 description: A Helm chart to deploy the localplane addons application in a Kubernetes cluster and custom resources for local development
 type: application
 version: 0.1.0

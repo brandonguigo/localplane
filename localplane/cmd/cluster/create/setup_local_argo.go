@@ -71,16 +71,16 @@ func setupLocalArgo(cmd *cobra.Command, disableArgoCD bool, kindCfgPath string, 
 		localStackHelmChartOwner := "brandonguigo"
 		localStackHelmChartRepo := "localplane"
 		localStackHelmChartRef := "main"
-		localStackHelmChartTemplatePath := "charts/local-stack"
-		localStackPath := filepath.Join(base, "local-argo", "charts", "local-stack")
-		log.Debug().Str("path", localStackPath).Msg("checking for local-stack helm chart in local-argo repo")
+		localStackHelmChartTemplatePath := "charts/workspace-template"
+		localStackPath := filepath.Join(base, "local-argo", "charts", "workspace")
+		log.Debug().Str("path", localStackPath).Msg("checking for workspace helm chart in local-argo repo")
 		if _, err := os.Stat(localStackPath); os.IsNotExist(err) {
-			log.Info().Str("path", localStackPath).Msgf("local-stack helm chart not found; downloading from GitHub repo %s/%s (ref: %s, path: %s)", localStackHelmChartOwner, localStackHelmChartRepo, localStackHelmChartRef, localStackHelmChartTemplatePath)
+			log.Info().Str("path", localStackPath).Msgf("workspace helm chart not found; downloading from GitHub repo %s/%s (ref: %s, path: %s)", localStackHelmChartOwner, localStackHelmChartRepo, localStackHelmChartRef, localStackHelmChartTemplatePath)
 			err := github.DownloadRepoPath(cmd.Context(), localStackHelmChartOwner, localStackHelmChartRepo, localStackHelmChartRef, localStackHelmChartTemplatePath, localStackPath, "")
 			if err != nil {
-				log.Fatal().Err(err).Str("path", localStackPath).Msg("failed to download local-stack helm chart from GitHub")
+				log.Fatal().Err(err).Str("path", localStackPath).Msg("failed to download workspace helm chart from GitHub")
 			} else {
-				log.Info().Str("path", localStackPath).Msg("downloaded local-stack helm chart from GitHub into local-argo repo")
+				log.Info().Str("path", localStackPath).Msg("downloaded workspace helm chart from GitHub into local-argo repo")
 			}
 
 			// commit local-argo repo changes
