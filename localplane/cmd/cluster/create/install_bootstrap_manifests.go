@@ -13,7 +13,7 @@ import (
 // chart into the created cluster. It logs and fatally exits on failure.
 func applyBootstrapManifests(cmd *cobra.Command, kubeconfigPath string, base string) {
 	kubectlClient := kubectl.NewClient(&kubeconfigPath, nil)
-	bootstrapPath := filepath.Join(base, "local-argo", "charts", "local-stack", "bootstrap")
+	bootstrapPath := filepath.Join(base, "local-argo", "charts", "workspace", "bootstrap")
 	patterns := []string{filepath.Join(bootstrapPath, "argo-bootstrap-*.yaml")}
 	log.Info().Strs("patterns", patterns).Msg("applying bootstrap manifests into cluster")
 	if err := kubectlClient.ApplyPaths(cmd.Context(), patterns); err != nil {

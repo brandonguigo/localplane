@@ -13,15 +13,16 @@ spec:
       path: .
       helm:
         values: |
-            fullnameOverride: headlamp
-            ingress:
-                enabled: true
-                ingressClassName: haproxy
-                hosts:
-                  - host: headlamp.localplane
-                    paths: 
-                    - path: "/"
-                      type: "Prefix"
+          fullnameOverride: headlamp
+          ingress:
+            enabled: true
+            ingressClassName: haproxy
+            hosts:
+              - host: headlamp.localplane
+                paths: 
+                - path: "/"
+                  type: "Prefix"
+          
   destination:
     server: "https://kubernetes.default.svc"
     namespace: monitoring

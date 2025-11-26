@@ -33,17 +33,17 @@ func createCluster(cmd *cobra.Command, args []string) {
 	if strings.TrimSpace(clusterName) == "" {
 		prompt := promptui.Prompt{
 			Label:   "Enter cluster name:",
-			Default: "local-bench",
+			Default: "localplane",
 		}
 
 		input, err := prompt.Run()
 		if err != nil {
 			log.Debug().Err(err).Msg("prompt cancelled or failed; using default cluster name")
-			clusterName = "local-bench"
+			clusterName = "localplane"
 		} else {
 			clusterName = strings.TrimSpace(input)
 			if clusterName == "" {
-				clusterName = "local-bench"
+				clusterName = "localplane"
 			}
 		}
 	}
@@ -68,7 +68,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 	}
 
 	// create cluster
-	s := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Prefix = "Creating kind cluster... "
 	s.Start()
 	kubeconfigPath := filepath.Join(config.CliConfig.Directory, "clusters", clusterName, "kubeconfig")
@@ -86,7 +86,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 	log.Info().Msg("local load balancer started")
 
 	// wait for readiness
-	s = spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+	s = spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Prefix = "Waiting for cluster to be ready... "
 	s.Start()
 	waitForClusterReadiness(clusterName, 3*time.Minute)
@@ -97,7 +97,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 	if disableArgoCD {
 		log.Info().Msg("skipping ArgoCD installation as requested")
 	} else {
-		s = spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+		s = spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 		s.Prefix = "Installing ArgoCD... "
 		s.Start()
 	}
@@ -109,7 +109,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 
 	// apply bootstrap manifests
 	if !disableArgoCD {
-		s := spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 		s.Prefix = "Applying bootstrap manifests... "
 		s.Start()
 		applyBootstrapManifests(cmd, kubeconfigPath, base)
@@ -124,7 +124,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 	// controller service of type LoadBalancer).
 	ingressNs := "ingress"
 
-	s = spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+	s = spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Prefix = "Waiting for LoadBalancer service for ingress... "
 	s.Start()
 	svc, err := waitForLoadBalancerService(context.Background(), kubeconfigPath, ingressNs, 3*time.Minute, 5*time.Second)
@@ -136,7 +136,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 	}
 
 	// update the dnsmasq configuration
-	s = spinner.New(spinner.CharSets[9], 100*time.Millisecond)
+	s = spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Prefix = "Updating dnsmasq configuration... "
 	s.Start()
 	domain := "localplane"
