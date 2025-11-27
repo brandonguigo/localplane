@@ -1,22 +1,21 @@
-{{- if .Values.addons.reloader -}}
+{{- if index .Values.addons "online-boutique" -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: reloader
+  name: online-boutique
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://stakater.github.io/stakater-charts
-    chart: reloader 
-    targetRevision: "2.2.5"
-    helm:
-      values: ""
+    repoURL: "oci://us-docker.pkg.dev/online-boutique-ci/charts/onlineboutique"
+    path: .
+    targetRevision: "0.10.4"
+    helm: {}
   destination:
     server: https://kubernetes.default.svc
-    namespace: kube-system
+    namespace: online-boutique
   syncPolicy:
     automated:
       prune: true

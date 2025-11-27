@@ -7,6 +7,8 @@ addons:
   haproxy-ingress: true
   victoria-metrics: true
   reloader: true
+  online-boutique: false
+  metrics-server: true
 
 # ingress defines the ingress controller to use and it's configuration
 ingress:

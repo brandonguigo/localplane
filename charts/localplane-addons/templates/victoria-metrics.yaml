@@ -4,6 +4,8 @@ kind: Application
 metadata:
   name: victoria-metrics-k8s-stack
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:

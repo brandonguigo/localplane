@@ -1,19 +1,21 @@
-{{- if .Values.addons.reloader -}}
+{{- if index .Values.addons "metrics-server" -}}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: reloader
+  name: metrics-server
   namespace: argocd
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://stakater.github.io/stakater-charts
-    chart: reloader 
-    targetRevision: "2.2.5"
+    repoURL: https://kubernetes-sigs.github.io/metrics-server/
+    chart: metrics-server
+    targetRevision: "3.13.0"
     helm:
-      values: ""
+      values: |
+        args:
+          - --kubelet-insecure-tls
   destination:
     server: https://kubernetes.default.svc
     namespace: kube-system
