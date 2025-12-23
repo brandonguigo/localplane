@@ -17,9 +17,9 @@ func displayClusterInfo(clusterName, kubeconfigPath, argoCDUrl, headlampUrl, hea
 
 	fmt.Printf("🗂️ Kubeconfig: %s", kubeconfigPath)
 	fmt.Println()
-	fmt.Printf("🥷🏻 ArgoCD:   http://%s", argoCDUrl)
+	fmt.Printf("🥷🏻 ArgoCD:   https://%s", argoCDUrl)
 	fmt.Println()
-	fmt.Printf("🔍 Headlamp: http://%s", headlampUrl)
+	fmt.Printf("🔍 Headlamp: https://%s", headlampUrl)
 	fmt.Println()
 	fmt.Printf("🔑 Headlamp Token: %s", headlampSecret)
 	fmt.Println()

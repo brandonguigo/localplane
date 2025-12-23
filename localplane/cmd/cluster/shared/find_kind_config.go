@@ -9,7 +9,7 @@ import (
 
 // findKindConfig searches for common kind config filenames and returns the first found path or empty string.
 func FindKindConfig(clusterName string) string {
-	base := config.CliConfig.Directory
+	base := config.CliConfig.Directory + "/workspace"
 	var err error
 	if base == "" {
 		base, err = os.Getwd()

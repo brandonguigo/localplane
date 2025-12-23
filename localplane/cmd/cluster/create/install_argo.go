@@ -16,8 +16,8 @@ func installArgoIfRequested(kubeconfigPath string, disableArgoCD bool) {
 
 	mounts := []argocdsvc.RepoMount{{
 		Name:      "local-argo",
-		HostPath:  "/mnt/local-argo",
-		MountPath: "/mnt/local-argo",
+		HostPath:  "/mnt/workspace",
+		MountPath: "/mnt/workspace",
 	}}
 	argocdsvcClient := argocdsvc.NewClient(kubeconfigPath)
 	out, err := argocdsvcClient.InstallOrUpgradeArgoCD(mounts)

@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: "file:///mnt/local-argo/.git"
+    repoURL: "file:///mnt/workspace/.git"
     targetRevision: main
-    path: charts/workspace
+    path: .
     helm:
       valueFiles:
       - values/localplane-addons.values.yaml

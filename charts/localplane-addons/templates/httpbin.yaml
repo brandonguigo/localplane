@@ -17,13 +17,13 @@ spec:
         values: |
             fullnameOverride: httpbin
             ingress:
-                enabled: true
-                ingressClassName: haproxy
-                hosts:
-                  - host: httpbin.localplane
-                    paths: 
-                    - path: "/"
-                      pathType: "Prefix"
+              enabled: true
+              ingressClassName: haproxy
+              hosts:
+                - host: httpbin.localplane
+                  paths: 
+                  - path: "/"
+                    pathType: "Prefix"
   destination:
     server: "https://kubernetes.default.svc"
     namespace: production

@@ -29,7 +29,7 @@ func setupLocalArgo(cmd *cobra.Command, disableArgoCD bool, kindCfgPath string, 
 
 	if !disableArgoCD {
 		if base != "" {
-			repoPath := filepath.Join(base, "local-argo")
+			repoPath := filepath.Join(base, "workspace")
 			log.Debug().Str("path", repoPath).Msg("initializing local-argo git repo")
 			if err := os.MkdirAll(repoPath, 0o755); err != nil {
 				log.Error().Err(err).Str("path", repoPath).Msg("failed to create local-argo git repo directory")
@@ -46,8 +46,8 @@ func setupLocalArgo(cmd *cobra.Command, disableArgoCD bool, kindCfgPath string, 
 
 		// add mount to kind config for local-argo if available
 		if base != "" && kindCfgPath != "" {
-			hostPath := filepath.Join(base, "local-argo")
-			containerPath := "/mnt/local-argo"
+			hostPath := filepath.Join(base, "workspace")
+			containerPath := "/mnt/workspace"
 			if kindCfg == nil {
 				if cfg, err := kindcfg.LoadKindConfig(kindCfgPath); err != nil {
 					log.Debug().Err(err).Str("path", kindCfgPath).Msg("failed to reload kind config before adding mount")
@@ -72,7 +72,7 @@ func setupLocalArgo(cmd *cobra.Command, disableArgoCD bool, kindCfgPath string, 
 		localStackHelmChartRepo := "localplane"
 		localStackHelmChartRef := "main"
 		localStackHelmChartTemplatePath := "charts/workspace-template"
-		localStackPath := filepath.Join(base, "local-argo", "charts", "workspace")
+		localStackPath := filepath.Join(base, "workspace")
 		log.Debug().Str("path", localStackPath).Msg("checking for workspace helm chart in local-argo repo")
 		if _, err := os.Stat(localStackPath); os.IsNotExist(err) {
 			log.Info().Str("path", localStackPath).Msgf("workspace helm chart not found; downloading from GitHub repo %s/%s (ref: %s, path: %s)", localStackHelmChartOwner, localStackHelmChartRepo, localStackHelmChartRef, localStackHelmChartTemplatePath)
