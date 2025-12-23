@@ -152,7 +152,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 	argoCDUrl := "argocd" + "." + domain
 	headlampUrl := "headlamp" + "." + domain
 	kubectlClient := kubectl.NewClient(&kubeconfigPath, nil)
-	headlampSecret, err := kubectlClient.CreateToken(context.TODO(), "headlamp", "monitoring")
+	headlampSecret, err := kubectlClient.CreateToken(context.TODO(), "headlamp", "kube-system")
 	if err != nil {
 		log.Error().Err(err).Msg("failed creating headlamp token")
 	}
