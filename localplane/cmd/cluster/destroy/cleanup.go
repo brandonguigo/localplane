@@ -9,7 +9,7 @@ import (
 )
 
 func cleanup(clusterName string) {
-	kubeconfigPath := filepath.Join(config.CliConfig.Directory, "clusters", clusterName, "kubeconfig")
+	kubeconfigPath := filepath.Join(config.CliConfig.Directory, "workspace", "clusters", clusterName, "kubeconfig")
 
 	if err := os.Remove(kubeconfigPath); err != nil {
 		log.Warn().Err(err).Str("path", kubeconfigPath).Msg("failed to delete kubeconfig file")

@@ -71,7 +71,7 @@ func createCluster(cmd *cobra.Command, args []string) {
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Prefix = "Creating kind cluster... "
 	s.Start()
-	kubeconfigPath := filepath.Join(config.CliConfig.Directory, "clusters", clusterName, "kubeconfig")
+	kubeconfigPath := filepath.Join(config.CliConfig.Directory, "workspace", "clusters", clusterName, "kubeconfig")
 	kindClient := kindsvc.NewClient(kubeconfigPath)
 	if err := kindClient.Create(clusterName, kindCfgPath); err != nil {
 		s.Stop()

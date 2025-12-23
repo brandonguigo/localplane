@@ -109,7 +109,7 @@ func (c *Client) Delete(name string) error {
 // a temp file; the function returns immediately while the process continues
 // running after the CLI exits.
 func (c *Client) StartLoadBalancer(clusterName string, background bool) error {
-	clusterDirPath := filepath.Join(config.CliConfig.Directory, "clusters", clusterName, ".cloud-provider-kind")
+	clusterDirPath := filepath.Join(config.CliConfig.Directory, "workspace", "clusters", clusterName, ".cloud-provider-kind")
 
 	if err := ensureCloudProviderKindInstalled(); err != nil {
 		return err
@@ -201,7 +201,7 @@ func (c *Client) StartLoadBalancer(clusterName string, background bool) error {
 // process by reading the pid file, attempting to kill the process (using
 // sudo if necessary), and removing the `.cloud-provider-kind` directory.
 func (c *Client) StopLoadBalancer(clusterName string) error {
-	clusterDirPath := filepath.Join(config.CliConfig.Directory, "clusters", clusterName, ".cloud-provider-kind")
+	clusterDirPath := filepath.Join(config.CliConfig.Directory, "workspace", "clusters", clusterName, ".cloud-provider-kind")
 	pidPath := filepath.Join(clusterDirPath, ".pid")
 
 	data, err := os.ReadFile(pidPath)
