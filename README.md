@@ -1,3 +1,16 @@
+> [!IMPORTANT]
+> **localplane has moved to GitLab.**
+>
+> This repository is archived and read-only. Development continues at
+> **<https://gitlab.com/atomic-blend/kubernetes/localplane/localplane>**,
+> as part of the [Atomic Blend](https://gitlab.com/atomic-blend) project.
+>
+> Issues and pull requests here are no longer monitored — please open them on GitLab instead.
+> Releases, including prebuilt binaries for macOS and Linux, are published there:
+> <https://gitlab.com/atomic-blend/kubernetes/localplane/localplane/-/releases>
+>
+> The content below is preserved as it was at the time of the move and is no longer updated.
+
 # localplane
 
 ## Quickstart
